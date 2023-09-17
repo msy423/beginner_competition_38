@@ -9,6 +9,12 @@ class preprocess_dataloder():
     def __call__(self):
         data = pd.read_csv('data/train.csv')
         data['Gender'] = data['Gender'].map({'Male': 0, 'Female': 1})
+        data['Age_Tbill_ratio'] = data['Age']/data['T_Bil'] 
+        data['Age_Dbill_ratio'] = data['Age']/data['D_Bil'] 
+        data['ALTgpt_ASTgot_diff'] = data['ALT_GPT'] - data['AST_GOT'] 
+        data['Tbil_Dbil_diff'] = data['T_Bil'] - data['D_Bil'] 
+        data['ALTgpt_ASTgot_prod'] = data['ALT_GPT'] * data['AST_GOT'] 
+        data['Tbil_Dbil_prod'] = data['T_Bil'] * data['D_Bil']
 
         data_without_disease=data.drop('disease',axis=1).copy()
         column_means = data.mean()
@@ -16,18 +22,27 @@ class preprocess_dataloder():
 
         #print("----------train means----------\n",means_by_disease)
 
+        
         z_scores = (data - data.mean()) / data.std()
 
         # Zスコアがしきい値を超える行を抽出
-        threshold = 3
+        threshold = 2
         outliers = data[(z_scores > threshold).any(axis=1)]
         # 外れ値を含む行を削除
         cleaned_data = data.drop(outliers.index)
 
         # インデックスをリセット（オプション）
         cleaned_data.reset_index(drop=True, inplace=True)
+        '''
 
+        threshold = 3.0
+        for column in ['Age', 'T_Bil', 'D_Bil', 'ALP', 'ALT_GPT', 'AST_GOT', 'TP', 'Alb', 'AG_ratio']:
+            z_scores = (data[column] - data[column].mean()) / data[column].std()
+            outliers = z_scores.abs() > threshold
+            data.loc[outliers, column] = data[column].mean()
 
+        cleaned_data= data
+        '''
         #age, alp, TP Alb,AG_ratioはあまり平均に差がない
 
         X = cleaned_data.drop('disease', axis=1)  #[['T_Bil', 'D_Bil', 'ALP', 'ALT_GPT', 'AST_GOT', 'TP', 'Alb']]

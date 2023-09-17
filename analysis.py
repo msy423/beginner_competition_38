@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 data = pd.read_csv('data/train.csv')
 data['Gender'] = data['Gender'].map({'Male': 0, 'Female': 1})
 
+data.describe()
 column_means = data.mean()
 means_by_disease = data.groupby('disease').mean()
 
@@ -34,8 +35,8 @@ print(cleaned_data)
 
 #age, alp, TP Alb,AG_ratioはあまり平均に差がない
 
-X = data[['T_Bil', 'D_Bil', 'ALP', 'ALT_GPT', 'AST_GOT', 'TP', 'Alb']]
-y = data['disease']
+#X = data[['T_Bil', 'D_Bil', 'ALP', 'ALT_GPT', 'AST_GOT', 'TP', 'Alb']]
+#y = data['disease']
 from sklearn.ensemble import IsolationForest
 # Isolation Forestを使用して外れ値を検出
 

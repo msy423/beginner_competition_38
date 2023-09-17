@@ -23,9 +23,9 @@ params = {
 'boosting_type': 'gbdt',
 'metric': 'binary_logloss',  # ログ尤度
 'num_leaves': 31,  # 木の最大葉数
-'learning_rate': 0.015,  # 学習率
-'max_bin': 100,
-'num_iterations':5000,
+'learning_rate': 0.035,  # 学習率
+'max_bin': 375,
+'num_iterations':3000,
 }
 
 model = lgb.train(params, lgb.Dataset(X_train, label=y_train), num_boost_round=100) 
@@ -94,7 +94,7 @@ print(f'Mean CV Score: {mean_cv_score}')
 #model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-threshold = 0.2
+threshold = 0.3
 y_pred = (y_pred > threshold).astype(int)
 
 accuracy = accuracy_score(y_test, y_pred)
@@ -106,12 +106,17 @@ print(f'Classification Report:\n{report}')
 print(f'Confusion Matrix:\n{confusion}')
 
 ########################################################
-
-
 print("\n---------------------------Submit set---------------------------\n")
 
 test_data = pd.read_csv('data/test.csv')
 test_data['Gender'] = test_data['Gender'].map({'Male': 0, 'Female': 1})
+test_data['Gender'] = test_data['Gender'].map({'Male': 0, 'Female': 1})
+test_data['Age_Tbill_ratio'] = test_data['Age']/test_data['T_Bil'] 
+test_data['Age_Dbill_ratio'] = test_data['Age']/test_data['D_Bil'] 
+test_data['ALTgpt_ASTgot_diff'] = test_data['ALT_GPT'] - test_data['AST_GOT'] 
+test_data['Tbil_Dbil_diff'] = test_data['T_Bil'] - test_data['D_Bil'] 
+test_data['ALTgpt_ASTgot_prod'] = test_data['ALT_GPT'] * test_data['AST_GOT'] 
+test_data['Tbil_Dbil_prod'] = test_data['T_Bil'] * test_data['D_Bil']
 
 means_by_disease_test = test_data.mean()
 print("----------test means----------\n",means_by_disease_test)
@@ -126,4 +131,10 @@ y_infe = (y_infe > threshold).astype(int)
 id = [i for i in range(len(y_infe))]
 
 output_data = pd.DataFrame(y_infe)
-output_data.to_csv('predicted_results.csv', header=False, index=True)
+output_data.to_csv('predicted_results4.csv', header=False, index=True)
+
+'''
+
+'''
+
+
